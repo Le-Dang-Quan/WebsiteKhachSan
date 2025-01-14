@@ -1,0 +1,281 @@
+<%- include('../layouts/header.ejs') %>
+<main>
+    
+    <section class="chat_main py-4">
+        <div class="container d-flex justify-content-center">
+            <div class="card chat-card shadow-lg" style="width: 80%; max-width: 900px; height: 80vh;">
+                <!-- Header -->
+                <div class="card-header bg-primary text-white d-flex align-items-center justify-content-between">
+                    <div>
+                        <h5 class="mb-0" style="color: white;"><%= order.FullName %></h5>
+                        <small class="text-light"><%= orderCode %></small>
+                    </div>
+                    <button class="btn btn-sm btn-light"><%= order.Phone %></button>
+                </div>
+                <!-- Body -->
+                <div class="card-body chat-body overflow-auto p-4 bg-light">
+                    <!-- Tin nhắn gửi đi -->
+                    <% if (messages.length <= 0){ %>
+                        <div class="d-flex flex-column align-items-start mb-3">
+                            <div class="p-3 bg-secondary text-white rounded-3 shadow-sm" style="max-width: 75%;">
+                                Xin chào! Bạn cần hỗ trợ gì ạ? Hoặc có thể liên hệ trực tiếp qua số điện thoại <%= admin.Phone %> để được hỗ trợ từ khách sạn nhé!
+                            </div>
+                            <small class="text-muted mt-1">
+                                <%= new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) %>
+                            </small>
+                        </div>
+                    <% }else{ %>
+                        <% messages.forEach(msg => { %>
+                            <% if (msg.IsAdmin === 1) { %>
+                                <!-- Tin nhắn của admin -->
+                                <div class="d-flex flex-column align-items-end mb-3">
+                                    <div class="p-3 bg-primary text-white rounded-3 shadow-sm" style="max-width: 75%;">
+                                        <%= msg.Message %>
+                                    </div>
+                                    <small class="text-muted mt-1">
+                                        <%= new Date(msg.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) %>
+                                    </small>
+                                </div>
+                            <% } else { %>
+                                <!-- Tin nhắn của người dùng -->
+                                <div class="d-flex flex-column align-items-start mb-3">
+                                    <div class="p-3 bg-secondary text-white rounded-3 shadow-sm" style="max-width: 75%;">
+                                        <%= msg.Message %>
+                                    </div>
+                                    <small class="text-muted mt-1">
+                                        <%= new Date(msg.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) %>
+                                    </small>
+                                </div>
+                            <% } %>
+                        <% }); %>
+                    <% } %>
+                </div>
+                <!-- Footer -->
+                <div class="card-footer bg-white p-3">
+                    <form id="chat-form" method="post" class="d-flex align-items-center" style="width: 100%;">
+                        <input 
+                            type="text" 
+                            name="message" 
+                            class="form-control rounded-pill me-2" 
+                            placeholder="Nhập tin nhắn..." 
+                            style="height: 50px;"
+                            id="message-input"
+                        />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</main>
+<style>
+    /* Khung chính của chat box */
+.chat-card {
+    border: none; /* Loại bỏ viền cũ */
+    border-radius: 20px; /* Bo góc mềm mại */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); /* Đổ bóng hiện đại */
+    overflow: hidden; /* Đảm bảo nội dung không bị tràn */
+    background: #ffffff; /* Nền trắng tinh tế */
+    display: flex;
+    flex-direction: column; /* Đảm bảo nội dung sắp xếp theo cột */
+}
+
+/* Header của chat box */
+.chat-card .card-header {
+    background: linear-gradient(90deg, #007bff, #0056b3); /* Hiệu ứng gradient */
+    color: #fff;
+    font-weight: bold;
+    font-size: 18px;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Nút thoát */
+.chat-card .card-header button {
+    background: #fff;
+    color: #007bff;
+    border: none;
+    padding: 5px 10px;
+    font-size: 14px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.chat-card .card-header button:hover {
+    background: #0056b3;
+    color: #fff;
+}
+
+/* Body của chat box */
+.chat-card .chat-body {
+    background-color: #f9f9f9; /* Nền sáng */
+    padding: 20px;
+    flex: 1; /* Đảm bảo phần body chiếm hết khoảng trống */
+    overflow-y: auto; /* Cuộn nội dung nếu quá dài */
+}
+
+/* Tin nhắn gửi đi */
+.chat-body .align-items-end .p-3 {
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 15px 15px 0 15px; /* Bo góc tinh tế */
+    font-size: 16px;
+    padding: 10px 15px;
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+
+/* Tin nhắn nhận được */
+.chat-body .align-items-start .p-3 {
+    background-color: #e1e1e1;
+    color: #333;
+    border-radius: 15px 15px 15px 0;
+    font-size: 16px;
+    padding: 10px 15px;
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+
+/* Thời gian tin nhắn */
+.chat-body small {
+    font-size: 12px;
+    color: #777;
+    margin-top: 5px;
+}
+
+/* Footer của chat box */
+.chat-card .card-footer {
+    background: #ffffff;
+    padding: 15px;
+    border-top: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+}
+
+/* Input tin nhắn */
+.chat-card .card-footer input {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    padding: 10px 15px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.chat-card .card-footer input:focus {
+    border-color: #007bff;
+}
+
+/* Nút gửi */
+.chat-card .card-footer button {
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    margin-left: 10px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.chat-card .card-footer button:hover {
+    background: #0056b3;
+    transform: scale(1.1); /* Hiệu ứng phóng to nhẹ */
+}
+
+.chat-card .card-footer button i {
+    margin: 0;
+}
+
+</style>
+<%- include('../layouts/footer.ejs') %>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        const orderId = "<%= orderId %>"; // Lấy orderCode từ server
+        let lastId = "<%= lastMessageId %>"; // Lưu trữ thời gian kiểm tra lần trước
+
+        $('.card-body').scrollTop($('.card-body')[0].scrollHeight);
+
+        // Gửi tin nhắn khi nhấn Enter hoặc nhấn nút gửi
+        $('#chat-form').on('submit', function(e) {
+            e.preventDefault(); // Ngăn form reload trang
+            const message = $('#message-input').val(); // Lấy giá trị input
+
+            if (message == '') return; // Không gửi tin nhắn rỗng
+
+            $.ajax({
+                url: `/tin-nhan/${orderId}`,
+                method: 'POST',
+                data: { message: message, isAdmin: 1 },
+                success: function(response) {
+                    // Thêm tin nhắn mới vào card-body
+                    $('.card-body').append(`
+                        <div class="d-flex flex-column align-items-end mb-3">
+                            <div class="p-3 bg-primary text-white rounded-3 shadow-sm" style="max-width: 75%;">
+                                ${message}
+                            </div>
+                            <small class="text-muted mt-1">
+                                ${new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+                            </small>
+                        </div>
+                    `);
+                    $('#message-input').val(''); // Xóa nội dung input
+                    $('.card-body').scrollTop($('.card-body')[0].scrollHeight); // Cuộn xuống cuối cùng
+                    lastId = response.data.Id;
+                },
+                error: function(err) {
+                    console.error('Không thể gửi tin nhắn:', err);
+                }
+            });
+        });
+
+        // Gửi tin nhắn khi nhấn phím Enter
+        $('#message-input').on('keypress', function(e) {
+            if (e.which === 13) {
+                e.preventDefault();
+                $('#chat-form').submit();
+            }
+        });
+
+        // Hàm để lấy tin nhắn mới nhất
+        function getNewMessages() {
+            $.get(`/tin-nhan/last/${orderId}?lastId=${lastId}`, function(response) {
+                if (response.success) {
+                    const messages = response.data;
+                    if (messages.length > 0) {
+                        messages.forEach(function(msg) {
+                            const messageHtml = `
+                                <div class="d-flex flex-column align-items-${msg.IsAdmin == 1 ? 'end' : 'start'} mb-3">
+                                    <div class="p-3 ${msg.IsAdmin == 1 ? 'bg-primary' : 'bg-secondary'} text-white rounded-3 shadow-sm" style="max-width: 75%;">
+                                        ${msg.Message}
+                                    </div>
+                                    <small class="text-muted mt-1">${new Date(msg.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</small>
+                                </div>
+                            `;
+                            // Append tin nhắn mới vào card-body
+                            $('.card-body').append(messageHtml);
+                        });
+
+                        // Cuộn xuống cuối cùng sau khi thêm tin nhắn mới
+                        $('.card-body').scrollTop($('.card-body')[0].scrollHeight);
+
+                        lastId = response.lastId;
+                    }
+                }
+            });
+        }
+
+        // Kiểm tra tin nhắn mới mỗi 1 giây
+        setInterval(getNewMessages, 1000);
+    });
+</script>
+
+

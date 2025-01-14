@@ -1,0 +1,158 @@
+<%- include('../layouts/header.ejs') %>
+<link rel="stylesheet" href="/public/website/css/rooms.min.css" />
+<header class="page">
+    <div class="container">
+        <ul class="breadcrumbs d-flex flex-wrap align-content-center">
+            <li class="list-item">
+                <a class="link" href="/">Trang Chủ</a>
+            </li>
+            <li class="list-item">
+                <a class="link" href="/rooms/">Phòng Nghỉ</a>
+            </li>
+        </ul>
+        <h1 class="page_title">Danh sách phòng</h1>
+    </div>
+</header>
+
+<!-- Main content -->
+<main class="rooms section">
+    <div class="container d-flex">
+        <div class="row">
+            <!-- Sidebar with widgets -->
+            <aside class="sidebar col-md-3">
+                <!-- Widget Search -->
+                <div class="widget widget-search">
+                    <h3 class="widget-title">Tìm Kiếm</h3>
+                    <form action="/phong-nghi" method="GET">
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="keyword" placeholder="Tìm kiếm phòng..." value="<%= keyword || '' %>">
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Widget Category -->
+                <div class="widget widget-category">
+                    <h3 class="widget-title">Chuyên Mục</h3>
+                    <ul class="category-list">
+                        <% categoryList.forEach(function(category) { %>
+                            <li class="category-item">
+                                <a href="/phong-nghi/?chuyenmuc=<%= category.Id %>" 
+                                class="category-link <%= selectedCategory == category.Id ? 'active' : '' %>">
+                                    <%= category.Name %>
+                                </a>
+                            </li>
+                        <% }) %>
+                    </ul>
+                </div>
+
+                <!-- Widget Facility -->
+                <div class="widget widget-facility">
+                    <h3 class="widget-title">Tiện Nghi</h3>
+                    <form action="/phong-nghi" method="GET">
+                        <ul class="facility-list">
+                            <% const facilities = [
+                                { key: "Bed", value: 1, label: "Giường Đơn" },
+                                { key: "Bed", value: 2, label: "Giường Đôi" },
+                                { key: "Bed", value: 3, label: "Giường Ba" },
+                                { key: "Wifi", value: 1, label: "Có Wifi" },
+                                { key: "Air", value: 1, label: "Có Điều Hòa" },
+                                { key: "Gym", value: 1, label: "Có Phòng Gym" },
+                                { key: "Kitchen", value: 1, label: "Có Bếp Riêng" },
+                                { key: "Washer", value: 1, label: "Có Máy Giặt" },
+                            ]; %>
+                            <% facilities.forEach((facility) => { %>
+                                <li class="facility-item">
+                                    <label class="facility-label">
+                                        <input 
+                                            type="checkbox" 
+                                            name="facility[]" 
+                                            value="<%= facility.key %>,<%= facility.value %>"
+                                            <%= selectedFacilities.includes(`${facility.key},${facility.value}`) ? "checked" : "" %>
+                                        >
+                                        <span><%= facility.label %></span>
+                                    </label>
+                                </li>
+                            <% }); %>
+                        </ul>
+                        <button type="submit" class="theme-element btn">Lọc</button>
+                    </form>
+                </div>
+            </aside>
+
+            <!-- Room list -->
+            <div class="room-list col-md-9">
+                <ul class="rooms_list">
+                    <% roomList.forEach(function(room) { %>
+                        <li class="rooms_list-item" data-order="1" data-aos="fade-up">
+                            <div class="item-wrapper d-md-flex">
+                                <div class="media">
+                                    <picture>
+                                        <source data-srcset="<%= room.Avatar %>" srcset="<%= room.Avatar %>" />
+                                        <img class="lazy" data-src="<%= room.Avatar %>" src="<%= room.Avatar %>" alt="media" />
+                                    </picture>
+                                </div>
+                                <div class="main d-md-flex justify-content-between">
+                                    <div class="main_info">
+                                        <a class="main_title h4" href="/phong-nghi/<%= room.Slug %>/"><%= room.Name %></a>
+                                        <p class="main_description"><%= room.Description %></p>
+                                        <div class="main_amenities">
+                                            <span class="main_amenities-item"><%= room.People %> người</span>
+                                        </div>
+                                    </div>
+                                    <div class="main_pricing">
+                                        <span class="main_pricing-item"><%= room.Price.toLocaleString() %>đ / 1 đêm</span>
+                                        <form action="/dat-phong/" method="POST">
+                                            <input type="hidden" value="<%= room.Id %>" name="RoomId">
+                                            <button class="theme-element btn">Đặt Phòng</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    <% }) %>
+                </ul>
+                <ul class="pagination" style="display: flex ; justify-content: center;">
+                    <% for (let i = 1; i <= totalPages; i++) { %>
+                        <li class="pagination-page">
+                            <a class="pagination-page_link <%= currentPage === i ? 'active' : '' %>" href="?page=<%= i %>"><%= i %></a>
+                        </li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+    </div>
+</main>
+<style>
+    .widget {
+        margin-bottom: 30px;
+        padding: 20px;
+        background: #fff;
+        -webkit-box-shadow: 0 2px 30px rgba(44, 60, 74, .08);
+        box-shadow: 0 2px 30px rgba(44, 60, 74, .08);
+        overflow: hidden;
+        border-radius: 8px;
+    }
+    .widget-title {
+        margin-bottom: 15px;
+        font-size: 18px;
+        font-weight: bold;
+    }
+    .category-list, .facility-list {
+        list-style: none;
+        padding: 0;
+    }
+    .category-item, .facility-item {
+        margin-bottom: 10px;
+    }
+    .category-link, .facility-label span {
+        font-size: 16px;
+        color: #333;
+        cursor: pointer;
+    }
+    .category-link .active {
+        color: #007bff;
+        font-weight: bold;
+    }
+
+</style>
+<%- include('../layouts/footer.ejs') %>
