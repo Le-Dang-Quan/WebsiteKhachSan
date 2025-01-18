@@ -66,13 +66,12 @@
                             <a class="nav-item" href="/dat-phong/tra-cuu/">Tra Cứu</a>
                         </li>
                         <% if(customer){ %>
-                            <li class="header_nav-list_item dropdown">
-                                <a class="nav-link nav-link--contacts dropdown-toggle d-inline-flex align-items-center"
-                                    href="/khach-hang/">
-                                    <i class="icon-user icon d-block" style="margin-bottom: 5px; margin-right: 10px;"></i>
-                                    <%= customer.FullName %> 
-                                </a>
-                                <div class="dropdown-menu collapse" id="contactsMenu">
+                            <li class="header_nav-list_item dropdown"><a class="nav-link nav-link--contacts dropdown-toggle d-inline-flex align-items-center" href="#" data-bs-toggle="" data-bs-target="#contactsMenu" aria-expanded="false" aria-controls="contactsMenu"><i class="icon-user icon d-block" style="margin-bottom: 5px; margin-right: 10px;"></i> Tài Khoản <i class="icon-chevron_down--entypo icon"></i></a>
+                                <div class="dropdown-menu" id="contactsMenu">
+                                    <ul class="dropdown-list">
+                                        <li class="list-item"><a class="dropdown-item nav-item" data-page="contacts03" href="/khach-hang/"><%= customer.FullName %></a></li>
+                                        <li class="list-item"><a class="dropdown-item nav-item" data-page="contacts01" href="/khach-hang/dang-xuat/">Đăng xuất</a></li>
+                                    </ul>
                                 </div>
                             </li>
                         <% }else{ %>

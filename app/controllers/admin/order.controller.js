@@ -115,6 +115,27 @@ class orderController {
       return res.status(500).send("Đã xảy ra lỗi khi tải đơn đặt phòng.");
     }
   }
+
+  //[GET] /admin/order/update-price
+  async updatePrice(req, res) {
+    const { orderId, price } = req.body;
+    try {
+      //Lấy order theo orderId
+      const order = await Order.findByPk(orderId);
+
+      const numberDay = Math.floor((new Date(order.End) - new Date(order.Start)) / (1000 * 60 * 60 * 24)) + 1;
+
+      //Cập nhật lại giá tiền Total của order bằng price * numberDay
+      await Order.update(
+        { Total: price * numberDay },
+        { where: { Id: orderId } }
+      );
+
+      return res.redirect('back');
+    } catch (err) {
+      return res.redirect('back');
+    }
+  }
 }
 
 module.exports = new orderController();

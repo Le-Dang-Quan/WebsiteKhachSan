@@ -5,6 +5,7 @@ const orderController = require('../../controllers/admin/order.controller');
 router.get('/:id/action/:action', orderController.action);
 router.get('/:id/paid/:action', orderController.paid);
 router.get('/:id', orderController.view);
+router.post('/update-price', orderController.updatePrice);
 router.get('/', orderController.index);
 
 module.exports = router;

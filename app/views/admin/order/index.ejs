@@ -31,6 +31,9 @@
                                                 <th tabindex="0" aria-controls="basic-datatable"
                                                 rowspan="1" colspan="1"
                                                 >Hình Ảnh</th>
+                                                <th tabindex="0" aria-controls="basic-datatable" rowspan="1"
+                                                colspan="1"
+                                                >Mã Đặt Phòng</th>
 	                                            <th tabindex="0" aria-controls="basic-datatable" rowspan="1"
 	                                                colspan="1"
 	                                                >Tên Phòng</th>
@@ -60,7 +63,9 @@
                                             <% orderList.forEach(function(order) { %>
                                                 <tr role="row" class="odd">
                                                     <td style="white-space: unset;"><img style="image-rendering: optimizeQuality;" src="<%= order.room.Avatar %>" width="100" height="100"></td>
-    
+                                                    
+                                                    <td style="white-space: unset;"><b><%= order.Code %></b></td>
+
                                                     <td style="white-space: unset;"><b><%= order.room.Name %></b></td>
     
                                                     <td><%= order.FullName %></td>
@@ -88,7 +93,10 @@
                                                             Không được phép
                                                         <% } else { %>
                                                             <% if(order.StatusPay == 0){ %>
-                                                                <a class="btn btn-warning" href="/admin/order/<%= order.Id %>/paid/1/">Xác Nhận Thanh Toán</a>
+                                                                <a class="btn btn-warning text-white" href="/admin/order/<%= order.Id %>/paid/1/">Xác Nhận Thanh Toán</a>
+                                                                <br>
+                                                                <br>
+                                                                <button class="btn btn-success text-white deal-price-btn" data-id="<%= order.Id %>">Deal Lại Giá</button>
                                                             <% }else if(order.StatusPay == 1){ %>
                                                                 <% if(order.StatusOrder == 0){ %>
                                                                     <a class="btn btn-warning" href="/admin/order/<%= order.Id %>/paid/2/">Xác Nhận Hoàn Tiền</a>
@@ -132,5 +140,35 @@
         </div><!-- end col-->
     </div>
 </div>
-
+<div class="modal fade" id="priceModal" tabindex="-1" aria-labelledby="priceModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="priceModalLabel">Deal Lại Giá</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="updatePriceForm" action="/admin/order/update-price/" method="POST">
+            <input type="hidden" id="orderId" name="orderId" value="">
+            <div class="mb-3">
+              <label for="priceInput" class="form-label">Nhập Lại Giá</label>
+              <input type="number" class="form-control" id="priceInput" name="price" placeholder="Giá phòng / 1 đêm" required>
+            </div>
+            <button type="submit" id="updatePriceBtn" class="btn btn-primary text-right">Cập Nhật</button>
+          </form>
+        </div>
+      </div>
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+$(document).ready(function () {
+  // Khi nhấn nút "Deal Lại Giá"
+  $('.deal-price-btn').click(function () {
+    const orderId = $(this).data('id'); // Lấy ID từ data-id
+    $('#orderId').val(orderId); // Gán ID vào input ẩn trong modal
+    $('#priceModal').modal('show'); // Hiển thị modal
+  });
+});
+</script>
 <%- include('../layouts/footer.ejs') %>

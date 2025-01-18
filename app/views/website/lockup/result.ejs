@@ -103,7 +103,14 @@
                         </span>
                     </div>
                     <div class="mt-4">
-                        <span><b>Giá phòng:</b> <%= room.Price.toLocaleString() %>đ / 1 đêm</span>
+                        <span><b>Giá phòng:</b> 
+                            
+                            <% if((order.Total / numberDay) < room.Price){ %>
+                                <%= (order.Total / numberDay).toLocaleString() %>đ / 1 đêm
+                            <% }else{ %>
+                                <%= room.Price.toLocaleString() %>đ / 1 đêm
+                            <% } %>
+                        </span>
                     </div>
                     
                 </div>
@@ -114,7 +121,13 @@
                     </div>  
                     <hr>
                     <div class="mt-4">
-                        <span><b>Tạm tính: </b> <%= room.Price.toLocaleString() %>đ x <%= numberDay %> đêm = <%= (room.Price * numberDay).toLocaleString() %>đ</span>
+                        <span><b>Tạm tính: </b> 
+                            <% if((order.Total / numberDay) < room.Price){ %>
+                                <%= (order.Total / numberDay).toLocaleString() %>đ x <%= numberDay %> đêm = <%= order.Total.toLocaleString() %>đ
+                            <% }else{ %>
+                                <%= room.Price.toLocaleString() %>đ x <%= numberDay %> đêm = <%= (room.Price * numberDay).toLocaleString() %>đ
+                            <% } %>
+                        </span>
                     </div>
                     <div class="mt-4">
                         <span>
@@ -144,9 +157,11 @@
                     </div>
                 <% } %>
             </div>
-            <div class="mt-5">
-                <a href="/tin-nhan/<%= order.Code %>" class="theme-element theme-element--accent btn">Nhắn Tin</a>
-            </div>
+            <% if(order.StatusPay == 0){ %>
+                <div class="mt-5">
+                    <a href="/tin-nhan/<%= order.Code %>" class="theme-element theme-element--accent btn">Nhắn Tin</a>
+                </div>
+            <% } %>
         </div>
     </div>
 </main>

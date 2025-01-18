@@ -142,6 +142,11 @@ class customerController {
             res.status(500).json({ message: 'Đã xảy ra lỗi khi đăng ký!', error: error.message });
         }
     }
+
+    async logout(req, res) {
+        req.session.destroy();
+        return res.redirect('/khach-hang/dang-nhap');
+    }
 }
 
 module.exports = new customerController();

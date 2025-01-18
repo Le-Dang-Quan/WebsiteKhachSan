@@ -8,6 +8,7 @@ router.post('/dang-nhap', requireLogout, customerController.login);
 router.get('/dang-ky', requireLogout, customerController.viewRegister);
 router.post('/dang-ky', requireLogout, customerController.register);
 router.post('/update', requireLogin, customerController.update);
+router.get('/dang-xuat', requireLogin, customerController.logout);
 router.get('/', requireLogin, customerController.index);
 
 
